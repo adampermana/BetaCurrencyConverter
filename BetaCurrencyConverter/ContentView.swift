@@ -13,20 +13,27 @@ struct ContentView: View {
     @State var currencyList = [String]()
     @State private var selectedCurrency = 0
     @FocusState private var inputIsFocused: Bool
+    let formatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
+
     
     let currencies = ["AUD", "BRL", "CAD", "CHF", "CNY", "EUR", "GBP", "HKD", "IDR", "INR", "JPY", "KRW", "MXN", "MYR", "PHP", "RUB", "SGD", "THB", "USD", "ZAR"]
     
     func makeRequest(showAll: Bool, currencies: [String] = ["AUD", "BRL", "CAD", "CHF", "CNY", "EUR", "GBP", "HKD", "IDR", "INR", "JPY", "KRW", "MXN", "MYR", "PHP", "RUB", "SGD", "THB", "USD", "ZAR"]) {
+        
         let url = "https://api.exchangerate.host/latest?base=\(base)&amount=\(input)"
         apiRequest(url: url) { currency in
             var tempList = [String]()
             for currency in currency.rates {
                 if showAll {
-                    tempList.append("\(currency.key) \(String(format: "%.2f", currency.value))")
-                } else if currencies.contains(currency.key) {
-                    tempList.append("\(currency.key) \(String(format: "%.2f", currency.value))")
-                }
-            }
+                                tempList.append("\(currency.key) \(String(format: "%.2f", currency.value))")
+                            } else if currencies.contains(currency.key) {
+                                tempList.append("\(currency.key) \(String(format: "%.2f", currency.value))")
+                            }
+                        }
             tempList.sort()
             currencyList = tempList
             print(tempList)
@@ -51,13 +58,15 @@ struct ContentView: View {
             VStack {
                 Form {
                     TextField("Enter an amount", text: $input)
-                        .padding()
+                        .padding([.leading, .trailing])
                         .background(Color.gray.opacity(0.10))
-                        .keyboardType(.decimalPad)
-                        .textFieldStyle(DefaultTextFieldStyle())
-                        .onTapGesture {
-                            self.inputIsFocused = true
+                        .keyboardType(.numberPad)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                self.inputIsFocused = true
+                            }
                         }
+
                     
                     Picker(selection: $selectedCurrency, label: Text("From")) {
                         ForEach(0..<currencies.count) { index in
