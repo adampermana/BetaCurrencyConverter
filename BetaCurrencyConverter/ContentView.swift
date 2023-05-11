@@ -12,7 +12,7 @@ struct ContentView: View {
     @State var base = ""
     @State var currencyList = [String]()
     @State private var selectedCurrency = 0
-    @State private var inputIsFocused = false
+    @FocusState private var inputIsFocused: Bool
     
     let currencies = ["AUD", "BRL", "CAD", "CHF", "CNY", "EUR", "GBP", "HKD", "IDR", "INR", "JPY", "KRW", "MXN", "MYR", "PHP", "RUB", "SGD", "THB", "USD", "ZAR"]
     
